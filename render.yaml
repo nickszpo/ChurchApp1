@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: church-app
+    env: php
+    buildCommand: "composer install --no-dev --optimize-autoloader"
+    startCommand: "php -S 0.0.0.0:\$PORT -t public public/index.php"
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: DB_DATABASE
+        value: /opt/render/project/src/database/database.sqlite
+    build:
+      dockerfile: Dockerfile
