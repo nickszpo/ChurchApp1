@@ -80,14 +80,48 @@ try {
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_appointments_start_time ON appointments(start_time)');
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_appointments_status ON appointments(status)');
     
-    // Create a default admin user if it doesn't exist
-    $stmt = $pdo->query("SELECT COUNT(*) as count FROM users WHERE username = 'admin'");
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    // Create default admin users if they don't exist
+    $adminUsers = [
+        [
+            'username' => 'admin',
+            'email' => 'admin@church.com',
+            'password' => 'admin123',
+            'role' => 'admin',
+            'full_name' => 'System Administrator',
+            'first_name' => 'System',
+            'last_name' => 'Administrator'
+        ],
+        [
+            'username' => 'priest',
+            'email' => 'priest@church.com',
+            'password' => 'priest123',
+            'role' => 'priest',
+            'full_name' => 'Father John Smith',
+            'first_name' => 'John',
+            'last_name' => 'Smith'
+        ],
+        [
+            'username' => 'secretary',
+            'email' => 'secretary@church.com',
+            'password' => 'secretary123',
+            'role' => 'user',
+            'full_name' => 'Mary Johnson',
+            'first_name' => 'Mary',
+            'last_name' => 'Johnson'
+        ]
+    ];
     
-    if ($result['count'] == 0) {
-        $hashedPassword = password_hash('admin123', PASSWORD_DEFAULT);
-        $pdo->exec("INSERT INTO users (username, email, password, role, full_name) 
-                   VALUES ('admin', 'admin@example.com', '$hashedPassword', 'admin', 'Administrator')");
+    foreach ($adminUsers as $user) {
+        $stmt = $pdo->query("SELECT COUNT(*) as count FROM users WHERE username = '{$user['username']}'");
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($result['count'] == 0) {
+            $hashedPassword = password_hash($user['password'], PASSWORD_DEFAULT);
+            $pdo->exec("INSERT INTO users (username, email, password, role, full_name, first_name, last_name, is_active) 
+                       VALUES ('{$user['username']}', '{$user['email']}', '$hashedPassword', '{$user['role']}', 
+                               '{$user['full_name']}', '{$user['first_name']}', '{$user['last_name']}', 1)");
+            error_log("Created user: {$user['username']} with role: {$user['role']}");
+        }
     }
     
     // Insert default services if they don't exist
@@ -112,7 +146,32 @@ try {
                    ('Main Church', 'Main church building', 200, 'Ground Floor', '#3b82f6'),
                    ('Chapel', 'Small chapel for intimate services', 50, 'First Floor', '#10b981'),
                    ('Meeting Room', 'Meeting room for consultations', 20, 'Second Floor', '#f59e0b'),
-                   ('Garden', 'Outdoor garden area', 100, 'Outside', '#8b5cf6')");
+                   ('Garden', 'Outdoor garden area', 100, 'Outside', '#8b5cf6'),
+                   ('Parish Hall', 'Large hall for events', 150, 'Ground Floor', '#ef4444'),
+                   ('Office', 'Parish office', 5, 'First Floor', '#6b7280')");
+        error_log("Created default resources");
+    }
+    
+    // Create sample appointments if they don't exist
+    $stmt = $pdo->query("SELECT COUNT(*) as count FROM appointments");
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if ($result['count'] == 0) {
+        // Get the first service and priest IDs
+        $serviceStmt = $pdo->query("SELECT id FROM services LIMIT 1");
+        $serviceId = $serviceStmt->fetch(PDO::FETCH_ASSOC)['id'];
+        
+        $priestStmt = $pdo->query("SELECT id FROM users WHERE role = 'priest' LIMIT 1");
+        $priestId = $priestStmt->fetch(PDO::FETCH_ASSOC)['id'];
+        
+        if ($serviceId && $priestId) {
+            $pdo->exec("INSERT INTO appointments (reference_number, user_id, service_id, priest_id, title, description, start_time, end_time, contact_name, contact_phone, contact_email, status) VALUES 
+                       ('APP-" . strtoupper(uniqid()) . "', 1, $serviceId, $priestId, 'Sunday Mass', 'Regular Sunday Mass service', 
+                        NOW() + INTERVAL '1 day', NOW() + INTERVAL '1 day' + INTERVAL '1 hour', 'John Doe', '555-0123', 'john@example.com', 'confirmed'),
+                       ('APP-" . strtoupper(uniqid()) . "', 1, $serviceId, $priestId, 'Baptism Ceremony', 'Baptism ceremony for baby Smith', 
+                        NOW() + INTERVAL '3 days', NOW() + INTERVAL '3 days' + INTERVAL '45 minutes', 'Jane Smith', '555-0456', 'jane@example.com', 'pending')");
+            error_log("Created sample appointments");
+        }
     }
     
     // Commit transaction
