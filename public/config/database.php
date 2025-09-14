@@ -48,7 +48,7 @@ class Database {
             
             // Only execute PRAGMA for SQLite
             if (!$this->isPostgreSQL) {
-                $this->pdo->exec('PRAGMA foreign_keys = ON');
+                // $this->pdo->exec('PRAGMA foreign_keys = ON'); // Commented out for PostgreSQL compatibility
             }
             
             $this->initializeDatabase();

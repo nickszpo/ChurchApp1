@@ -11,7 +11,7 @@ try {
     $pdo->beginTransaction();
     
     // Get current table structure
-    // $stmt = $pdo->query("PRAGMA table_info(users)"); // Commented out for PostgreSQL compatibility
+    // // $stmt = $pdo->query("PRAGMA table_info(users)"); // Commented out for PostgreSQL compatibility // Commented out for PostgreSQL compatibility
     $columns = [];
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $columns[strtolower($row['name'])] = $row;
@@ -64,7 +64,7 @@ try {
 
 // Show final table structure
 echo "\nFinal table structure:\n";
-$stmt = $pdo->query("PRAGMA table_info(users)");
+// $stmt = $pdo->query("PRAGMA table_info(users)"); // Commented out for PostgreSQL compatibility
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     echo "- {$row['name']} ({$row['type']})\n";
 }
