@@ -25,61 +25,61 @@ try {
 
     // Create users table
     $pdo->exec('CREATE TABLE users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL UNIQUE,
-    email TEXT NOT NULL UNIQUE,
-    password TEXT NOT NULL,
-    role TEXT NOT NULL DEFAULT "user",
-    phone TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL DEFAULT \'user\',
+    phone VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )');
 
 // Create services table
-$db->exec('CREATE TABLE IF NOT EXISTS services (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
+$pdo->exec('CREATE TABLE IF NOT EXISTS services (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
     description TEXT,
     duration_minutes INTEGER NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )');
 
 // Create appointments table
-$db->exec('CREATE TABLE IF NOT EXISTS appointments (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
+$pdo->exec('CREATE TABLE IF NOT EXISTS appointments (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
     description TEXT,
     service_id INTEGER,
     date DATE NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
-    status TEXT DEFAULT "pending",
+    status VARCHAR(50) DEFAULT 'pending',
     notes TEXT,
-    contact_name TEXT NOT NULL,
-    contact_email TEXT NOT NULL,
-    contact_phone TEXT,
-    reference_number TEXT,
+    contact_name VARCHAR(255) NOT NULL,
+    contact_email VARCHAR(255) NOT NULL,
+    contact_phone VARCHAR(20),
+    reference_number VARCHAR(50),
     created_by INTEGER,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     priest_id INTEGER,
     FOREIGN KEY (service_id) REFERENCES services(id),
     FOREIGN KEY (created_by) REFERENCES users(id)
 )');
 
 // Create resources table
-$db->exec('CREATE TABLE IF NOT EXISTS resources (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
+$pdo->exec('CREATE TABLE IF NOT EXISTS resources (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
     description TEXT,
     quantity INTEGER NOT NULL DEFAULT 1,
-    is_available BOOLEAN DEFAULT 1,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    is_available BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )');
 
 // Create service_resources table
-$db->exec('CREATE TABLE IF NOT EXISTS service_resources (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+$pdo->exec('CREATE TABLE IF NOT EXISTS service_resources (
+    id SERIAL PRIMARY KEY,
     service_id INTEGER NOT NULL,
     resource_id INTEGER NOT NULL,
     quantity_required INTEGER NOT NULL DEFAULT 1,
@@ -89,16 +89,16 @@ $db->exec('CREATE TABLE IF NOT EXISTS service_resources (
 )');
 
 // Create announcements table
-$db->exec('CREATE TABLE IF NOT EXISTS announcements (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
+$pdo->exec('CREATE TABLE IF NOT EXISTS announcements (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
-    is_active BOOLEAN DEFAULT 1,
+    is_active BOOLEAN DEFAULT true,
     created_by INTEGER,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (created_by) REFERENCES users(id)
 )');
 

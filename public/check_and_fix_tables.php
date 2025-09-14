@@ -16,22 +16,22 @@ $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $tables_sql = [
     'services' => "
         CREATE TABLE IF NOT EXISTS services (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             name VARCHAR(100) NOT NULL,
             description TEXT,
             duration INTEGER NOT NULL DEFAULT 60,
-            is_active BOOLEAN NOT NULL DEFAULT 1,
+            is_active BOOLEAN NOT NULL DEFAULT true,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ",
     'appointments' => "
         CREATE TABLE IF NOT EXISTS appointments (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             title VARCHAR(255) NOT NULL,
             description TEXT,
-            start_time DATETIME NOT NULL,
-            end_time DATETIME NOT NULL,
+            start_time TIMESTAMP NOT NULL,
+            end_time TIMESTAMP NOT NULL,
             status VARCHAR(20) NOT NULL DEFAULT 'pending',
             service_id INTEGER NOT NULL,
             user_id INTEGER NOT NULL,
@@ -48,10 +48,10 @@ $tables_sql = [
     ",
     'announcements' => "
         CREATE TABLE IF NOT EXISTS announcements (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             title VARCHAR(255) NOT NULL,
             content TEXT NOT NULL,
-            is_pinned BOOLEAN NOT NULL DEFAULT 0,
+            is_pinned BOOLEAN NOT NULL DEFAULT false,
             user_id INTEGER NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -60,11 +60,11 @@ $tables_sql = [
     ",
     'resources' => "
         CREATE TABLE IF NOT EXISTS resources (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             name VARCHAR(100) NOT NULL,
             description TEXT,
             color VARCHAR(20) DEFAULT '#007bff',
-            is_active BOOLEAN NOT NULL DEFAULT 1,
+            is_active BOOLEAN NOT NULL DEFAULT true,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
