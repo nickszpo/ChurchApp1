@@ -17,14 +17,34 @@ class Database {
             error_log("DB_DATABASE: " . ($dbDatabase ?: 'NOT SET'));
             error_log("DB_USERNAME: " . ($dbUsername ?: 'NOT SET'));
             error_log("DB_PASSWORD: " . ($dbPassword ? 'SET' : 'NOT SET'));
+            error_log("All environment variables: " . print_r($_ENV, true));
             
-            if ($dbHost && $dbDatabase && $dbUsername && $dbPassword) {
+            // Force PostgreSQL if we're on Render (check for RENDER environment)
+            $isRender = getenv('RENDER') || getenv('RENDER_EXTERNAL_URL');
+            error_log("Is Render environment: " . ($isRender ? 'YES' : 'NO'));
+            
+            // Always use PostgreSQL on Render, even if env vars are not set
+            if ($isRender || ($dbHost && $dbDatabase && $dbUsername && $dbPassword)) {
                 // PostgreSQL configuration for production
-                $dsn = "pgsql:host=" . $dbHost . 
-                       ";port=" . getenv('DB_PORT', '5432') . 
-                       ";dbname=" . $dbDatabase . 
-                       ";user=" . $dbUsername . 
-                       ";password=" . $dbPassword;
+                if ($dbHost && $dbDatabase && $dbUsername && $dbPassword) {
+                    $dsn = "pgsql:host=" . $dbHost . 
+                           ";port=" . getenv('DB_PORT', '5432') . 
+                           ";dbname=" . $dbDatabase . 
+                           ";user=" . $dbUsername . 
+                           ";password=" . $dbPassword;
+                    error_log("Using provided PostgreSQL connection");
+                } else {
+                    // Use Render's internal database connection
+                    error_log("Using Render internal PostgreSQL connection");
+                    // Try to get the database URL from Render's environment
+                    $databaseUrl = getenv('DATABASE_URL');
+                    if ($databaseUrl) {
+                        $dsn = $databaseUrl;
+                    } else {
+                        // Fallback to default Render PostgreSQL
+                        $dsn = "pgsql:host=localhost;port=5432;dbname=postgres;user=postgres;password=postgres";
+                    }
+                }
                 
                 $this->pdo = new PDO($dsn);
                 $this->isPostgreSQL = true;
