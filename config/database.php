@@ -30,7 +30,7 @@ class Database {
             $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
             
             if (getenv('DB_CONNECTION') !== 'pgsql') {
-                $this->pdo->exec('PRAGMA foreign_keys = ON');
+                // $this->pdo->exec('PRAGMA foreign_keys = ON'); // Commented out for PostgreSQL compatibility
             }
             
             $this->initializeDatabase();

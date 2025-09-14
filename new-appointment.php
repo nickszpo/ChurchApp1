@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $referenceNumber = 'APP-' . strtoupper(uniqid());
                 
                 // Check which columns exist in the appointments table
-                $stmt = $pdo->query("PRAGMA table_info(appointments)");
+                // $stmt = $pdo->query("PRAGMA table_info(appointments)"); // Commented out for PostgreSQL compatibility
                 $columns = $stmt->fetchAll();
                 $existingColumns = array_column($columns, 'name');
                 
