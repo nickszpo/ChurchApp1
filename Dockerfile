@@ -18,6 +18,9 @@ RUN apt-get update && apt-get install -y \
 # Install PHP extensions
 RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
 
+# Enable PostgreSQL extension explicitly
+RUN echo "extension=pdo_pgsql" > /usr/local/etc/php/conf.d/pdo_pgsql.ini
+
 # Enable Apache modules and configure
 RUN a2enmod rewrite \
     && echo "ServerName localhost" >> /etc/apache2/apache2.conf
