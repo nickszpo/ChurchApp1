@@ -12,6 +12,12 @@ class Database {
             $dbUsername = getenv('DB_USERNAME');
             $dbPassword = getenv('DB_PASSWORD');
             
+            // Debug: Log environment variables
+            error_log("DB_HOST: " . ($dbHost ?: 'NOT SET'));
+            error_log("DB_DATABASE: " . ($dbDatabase ?: 'NOT SET'));
+            error_log("DB_USERNAME: " . ($dbUsername ?: 'NOT SET'));
+            error_log("DB_PASSWORD: " . ($dbPassword ? 'SET' : 'NOT SET'));
+            
             if ($dbHost && $dbDatabase && $dbUsername && $dbPassword) {
                 // PostgreSQL configuration for production
                 $dsn = "pgsql:host=" . $dbHost . 
@@ -22,6 +28,7 @@ class Database {
                 
                 $this->pdo = new PDO($dsn);
                 $this->isPostgreSQL = true;
+                error_log("Using PostgreSQL database");
             } else {
                 // SQLite configuration for local development
                 $db_file = __DIR__ . '/../database/st_thomas_aquinas_parish_events.db';
@@ -33,6 +40,7 @@ class Database {
                 
                 $this->pdo = new PDO('sqlite:' . $db_file);
                 $this->isPostgreSQL = false;
+                error_log("Using SQLite database");
             }
             
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
