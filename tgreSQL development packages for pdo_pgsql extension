@@ -1,0 +1,3 @@
+[33m7867a2f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Prepare for Render deployment - Add Docker configuration, entrypoint script, and .htaccess
+[33mc8205c1[m Add deployment configuration for Render
+[33m245a44c[m Initial commit with complete application files
