@@ -11,13 +11,11 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     sqlite3 \
-    libpq-dev \
-    postgresql-client \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-install pdo pdo_sqlite mbstring exif pcntl bcmath gd
 
 # Enable Apache modules and configure
 RUN a2enmod rewrite \
