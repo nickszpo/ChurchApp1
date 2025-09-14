@@ -39,7 +39,20 @@ class Database {
                     // Try to get the database URL from Render's environment
                     $databaseUrl = getenv('DATABASE_URL');
                     if ($databaseUrl) {
-                        $dsn = $databaseUrl;
+                        // Parse the DATABASE_URL properly
+                        $parsedUrl = parse_url($databaseUrl);
+                        if ($parsedUrl && isset($parsedUrl['host'], $parsedUrl['user'], $parsedUrl['pass'], $parsedUrl['path'])) {
+                            $dsn = "pgsql:host=" . $parsedUrl['host'] . 
+                                   ";port=" . ($parsedUrl['port'] ?? '5432') . 
+                                   ";dbname=" . ltrim($parsedUrl['path'], '/') . 
+                                   ";user=" . $parsedUrl['user'] . 
+                                   ";password=" . $parsedUrl['pass'];
+                            error_log("Parsed DATABASE_URL: " . $dsn);
+                        } else {
+                            // Fallback to using the URL directly
+                            $dsn = $databaseUrl;
+                            error_log("Using DATABASE_URL directly: " . $databaseUrl);
+                        }
                     } else {
                         // Fallback to default Render PostgreSQL
                         $dsn = "pgsql:host=localhost;port=5432;dbname=postgres;user=postgres;password=postgres";
