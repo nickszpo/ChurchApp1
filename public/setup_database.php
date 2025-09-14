@@ -53,7 +53,7 @@ $pdo->exec('CREATE TABLE IF NOT EXISTS appointments (
     date DATE NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
-    status VARCHAR(50) DEFAULT 'pending',
+    status VARCHAR(50) DEFAULT \'pending\',
     notes TEXT,
     contact_name VARCHAR(255) NOT NULL,
     contact_email VARCHAR(255) NOT NULL,
