@@ -1,0 +1,139 @@
+<?php
+class Database {
+    private $pdo;
+    private static $instance = null;
+
+    private function __construct() {
+        try {
+            if (getenv('DB_CONNECTION') === 'pgsql') {
+                // PostgreSQL configuration for production
+                $dsn = "pgsql:host=" . getenv('DB_HOST') . 
+                       ";port=" . getenv('DB_PORT', '5432') . 
+                       ";dbname=" . getenv('DB_DATABASE') . 
+                       ";user=" . getenv('DB_USERNAME') . 
+                       ";password=" . getenv('DB_PASSWORD');
+                
+                $this->pdo = new PDO($dsn);
+            } else {
+                // SQLite configuration for local development
+                $db_file = __DIR__ . '/../database/st_thomas_aquinas_parish_events.db';
+                $db_dir = dirname($db_file);
+                
+                if (!file_exists($db_dir)) {
+                    mkdir($db_dir, 0755, true);
+                }
+                
+                $this->pdo = new PDO('sqlite:' . $db_file);
+            }
+            
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            
+            if (getenv('DB_CONNECTION') !== 'pgsql') {
+                $this->pdo->exec('PRAGMA foreign_keys = ON');
+            }
+            
+            $this->initializeDatabase();
+        } catch (PDOException $e) {
+            die('Database connection failed: ' . $e->getMessage());
+        }
+    }
+
+    public static function getInstance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    public function getConnection() {
+        return $this->pdo;
+    }
+
+    private function initializeDatabase() {
+        // Users table
+        $this->pdo->exec('CREATE TABLE IF NOT EXISTS users (
+            id ' . (getenv('DB_CONNECTION') === 'pgsql' ? 'SERIAL PRIMARY KEY' : 'INTEGER PRIMARY KEY AUTOINCREMENT') . ',
+            username TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL,
+            full_name TEXT NOT NULL,
+            first_name TEXT,
+            last_name TEXT,
+            email TEXT,
+            phone TEXT,
+            bio TEXT,
+            is_active INTEGER DEFAULT 1,
+            role TEXT NOT NULL DEFAULT ' . $this->pdo->quote('user') . ',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP' . 
+            (getenv('DB_CONNECTION') === 'pgsql' ? ',
+            CONSTRAINT unique_username UNIQUE (username)' : '') . '
+        )');
+
+        // Services table
+        $this->pdo->exec('CREATE TABLE IF NOT EXISTS services (
+            id ' . (getenv('DB_CONNECTION') === 'pgsql' ? 'SERIAL PRIMARY KEY' : 'INTEGER PRIMARY KEY AUTOINCREMENT') . ',
+            name TEXT NOT NULL UNIQUE,
+            description TEXT,
+            duration_minutes INTEGER DEFAULT 60,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP' .
+            (getenv('DB_CONNECTION') === 'pgsql' ? ',
+            CONSTRAINT unique_service_name UNIQUE (name)' : '') . '
+        )');
+
+        // Resources table
+        $this->pdo->exec('CREATE TABLE IF NOT EXISTS resources (
+            id ' . (getenv('DB_CONNECTION') === 'pgsql' ? 'SERIAL PRIMARY KEY' : 'INTEGER PRIMARY KEY AUTOINCREMENT') . ',
+            name TEXT NOT NULL UNIQUE,
+            description TEXT,
+            capacity INTEGER,
+            location TEXT,
+            color_code TEXT DEFAULT ' . $this->pdo->quote('#3b82f6') . ',
+            is_active BOOLEAN DEFAULT TRUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP' .
+            (getenv('DB_CONNECTION') === 'pgsql' ? ',
+            CONSTRAINT unique_resource_name UNIQUE (name)' : '') . '
+        )');
+
+        // Appointments table
+        $this->pdo->exec('CREATE TABLE IF NOT EXISTS appointments (
+            id ' . (getenv('DB_CONNECTION') === 'pgsql' ? 'SERIAL PRIMARY KEY' : 'INTEGER PRIMARY KEY AUTOINCREMENT') . ',
+            reference_number TEXT NOT NULL UNIQUE,
+            user_id INTEGER NOT NULL,
+            service_id INTEGER NOT NULL,
+            priest_id INTEGER,
+            title TEXT NOT NULL,
+            description TEXT,
+            start_time TIMESTAMP NOT NULL,
+            end_time TIMESTAMP NOT NULL,
+            contact_name TEXT,
+            contact_phone TEXT,
+            contact_email TEXT,
+            status TEXT NOT NULL DEFAULT ' . $this->pdo->quote('pending') . ',
+            notes TEXT,
+            is_recurring BOOLEAN DEFAULT FALSE,
+            recurrence_pattern TEXT,
+            recurrence_end_date TIMESTAMP,
+            parent_appointment_id INTEGER,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP' .
+            (getenv('DB_CONNECTION') === 'pgsql' ? ',
+            CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            CONSTRAINT fk_service FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE,
+            CONSTRAINT fk_priest FOREIGN KEY (priest_id) REFERENCES users(id) ON DELETE SET NULL,' . "\n" . 
+            '            CONSTRAINT unique_reference_number UNIQUE (reference_number)' : '') . '
+        )');
+
+        // Add indexes
+        $this->pdo->exec('CREATE INDEX IF NOT EXISTS idx_appointments_user_id ON appointments(user_id)');
+        $this->pdo->exec('CREATE INDEX IF NOT EXISTS idx_appointments_service_id ON appointments(service_id)');
+        $this->pdo->exec('CREATE INDEX IF NOT EXISTS idx_appointments_start_time ON appointments(start_time)');
+        $this->pdo->exec('CREATE INDEX IF NOT EXISTS idx_appointments_status ON appointments(status)');
+        
+        // For PostgreSQL, add additional indexes and constraints
+        if (getenv('DB_CONNECTION') === 'pgsql') {
+            // Add any PostgreSQL specific indexes or constraints here
+            $this->pdo->exec('CREATE INDEX IF NOT EXISTS idx_appointments_dates ON appointments USING btree (start_time, end_time)');
+        }
+    }
+}
