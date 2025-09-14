@@ -83,7 +83,7 @@ $tables_sql = [
 
 try {
     // Enable foreign keys
-    $pdo->exec('PRAGMA foreign_keys = ON');
+    // $pdo->exec('PRAGMA foreign_keys = ON'); // Commented out for PostgreSQL compatibility
     
     // Create tables
     foreach ($tables_sql as $table_name => $sql) {

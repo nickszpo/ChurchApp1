@@ -15,7 +15,7 @@ $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 // Function to add a column if it doesn't exist
 function addColumnIfNotExists($pdo, $table, $column, $definition) {
     try {
-        $stmt = $pdo->query("PRAGMA table_info($table)");
+        // $stmt = $pdo->query("PRAGMA table_info($table)"); // Commented out for PostgreSQL compatibility
         $columns = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $columns[strtolower($row['name'])] = true;
@@ -38,7 +38,7 @@ try {
     
     // Check users table
     echo "\n=== Users Table ===\n";
-    $stmt = $pdo->query("PRAGMA table_info(users)");
+    // $stmt = $pdo->query("PRAGMA table_info(users)"); // Commented out for PostgreSQL compatibility
     $users_columns = [];
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $users_columns[strtolower($row['name'])] = $row;
@@ -71,7 +71,7 @@ try {
     // If we made changes, show the new structure
     if ($changes_made) {
         echo "\n=== Updated Users Table Structure ===\n";
-        $stmt = $pdo->query("PRAGMA table_info(users)");
+        // $stmt = $pdo->query("PRAGMA table_info(users)"); // Commented out for PostgreSQL compatibility
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             echo "- {$row['name']} ({$row['type']})\n";
         }

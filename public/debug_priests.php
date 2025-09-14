@@ -22,7 +22,7 @@ try {
         echo "<p>✓ Users table exists</p>";
         
         // Check users table structure
-        $stmt = $pdo->query("PRAGMA table_info(users)");
+        // $stmt = $pdo->query("PRAGMA table_info(users)"); // Commented out for PostgreSQL compatibility
         echo "<h3>Users table structure:</h3>";
         echo "<table border='1' cellpadding='5'>";
         echo "<tr><th>ID</th><th>Name</th><th>Type</th><th>Not Null</th><th>Default Value</th><th>Primary Key</th></tr>";

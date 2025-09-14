@@ -114,7 +114,7 @@ foreach ($files_to_check as $file) {
 echo "<h2>Test 7: Database Schema</h2>";
 try {
     // Check appointments table structure
-    $stmt = $pdo->query("PRAGMA table_info(appointments)");
+    // $stmt = $pdo->query("PRAGMA table_info(appointments)"); // Commented out for PostgreSQL compatibility
     $columns = $stmt->fetchAll();
     $required_columns = ['id', 'reference_number', 'user_id', 'service_id', 'priest_id', 'title', 'description', 'start_time', 'end_time', 'contact_name', 'contact_phone', 'contact_email', 'status'];
     

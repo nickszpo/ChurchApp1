@@ -17,7 +17,7 @@ foreach ($tables as $table) {
     echo "Table: $table\n";
     
     // Get table info
-    $stmt = $pdo->query("PRAGMA table_info($table)");
+    // $stmt = $pdo->query("PRAGMA table_info($table)"); // Commented out for PostgreSQL compatibility
     $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     echo "Columns:\n";

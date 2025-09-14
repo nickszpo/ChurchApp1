@@ -18,7 +18,7 @@ class Database {
             $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
             
             // Enable foreign key constraints
-            $this->pdo->exec('PRAGMA foreign_keys = ON');
+            // $this->pdo->exec('PRAGMA foreign_keys = ON'); // Commented out for PostgreSQL compatibility
             
             // Create tables if they don't exist
             $this->initializeDatabase();

@@ -48,7 +48,7 @@ try {
     
     // Check the users table structure
     echo "<h2>Users Table Structure</h2>";
-    $stmt = $pdo->query("PRAGMA table_info(users)");
+    // $stmt = $pdo->query("PRAGMA table_info(users)"); // Commented out for PostgreSQL compatibility
     $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     if (count($columns) > 0) {

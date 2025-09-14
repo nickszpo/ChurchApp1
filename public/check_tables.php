@@ -51,7 +51,7 @@ try {
             }
             
             // Get table structure
-            $stmt = $pdo->query("PRAGMA table_info($table)");
+            // $stmt = $pdo->query("PRAGMA table_info($table)"); // Commented out for PostgreSQL compatibility
             $table_columns = [];
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $table_columns[] = $row['name'];

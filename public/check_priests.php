@@ -15,7 +15,7 @@ $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 try {
     // 1. Check if users table has the required columns
     echo "=== Checking Users Table ===\n";
-    $stmt = $pdo->query("PRAGMA table_info(users)");
+    // $stmt = $pdo->query("PRAGMA table_info(users)"); // Commented out for PostgreSQL compatibility
     $columns = [];
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $columns[strtolower($row['name'])] = $row;

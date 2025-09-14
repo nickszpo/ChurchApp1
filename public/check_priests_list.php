@@ -15,7 +15,7 @@ $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 try {
     // Check users table structure
     echo "=== Users Table Structure ===\n";
-    $stmt = $pdo->query("PRAGMA table_info(users)");
+    // $stmt = $pdo->query("PRAGMA table_info(users)"); // Commented out for PostgreSQL compatibility
     $columns = [];
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $columns[] = $row['name'] . ' (' . $row['type'] . ')';
