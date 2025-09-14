@@ -1,0 +1,62 @@
+# Dependency directories
+/vendor/
+/node_modules/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Database files
+/database/*.db
+/database/*.sqlite
+/database/*.sqlite3
+
+# Logs
+*.log
+/error_log
+
+# Session files
+/sessions/*
+
+# Cache files
+/cache/*
+
+# Uploaded files
+/uploads/*
+
+# IDE specific files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+*.sublime-
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# XAMPP
+/xampp/
+
+# Local development
+.htaccess
+.htpasswd
+
+# Composer
+composer.lock
+composer.phar
+
+# Node
+package-lock.json
+yarn.lock
+
+# Temp files
+*.tmp
+*.swp
+*~
