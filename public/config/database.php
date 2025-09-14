@@ -89,7 +89,9 @@ class Database {
         return $this->pdo;
     }
 
-    private function initializeDatabase() {
+    // REMOVED: Database initialization is now handled entirely by init_db.php
+    // This method has been removed to prevent SQLite syntax conflicts
+    private function initializeDatabase_DISABLED() {
         // Users table
         $this->pdo->exec('CREATE TABLE IF NOT EXISTS users (
             id ' . ($this->isPostgreSQL ? 'SERIAL PRIMARY KEY' : 'INTEGER PRIMARY KEY AUTOINCREMENT') . ',
