@@ -6,9 +6,6 @@ $database = Database::getInstance();
 $pdo = $database->getConnection();
 
 try {
-    // Enable foreign key constraints
-    $pdo->exec('PRAGMA foreign_keys = ON');
-    
     // Begin transaction
     $pdo->beginTransaction();
 
