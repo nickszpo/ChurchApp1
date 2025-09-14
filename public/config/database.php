@@ -71,7 +71,8 @@ class Database {
                 // $this->pdo->exec('PRAGMA foreign_keys = ON'); // Commented out for PostgreSQL compatibility
             }
             
-            $this->initializeDatabase();
+            // Database initialization is handled by init_db.php
+            // $this->initializeDatabase();
         } catch (PDOException $e) {
             die('Database connection failed: ' . $e->getMessage());
         }
