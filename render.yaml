@@ -10,28 +10,3 @@ services:
         value: "false"
       - key: DB_CONNECTION
         value: pgsql
-      - key: DB_HOST
-        fromDatabase:
-          name: church-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: church-db
-          property: port
-      - key: DB_DATABASE
-        fromDatabase:
-          name: church-db
-          property: database
-      - key: DB_USERNAME
-        fromDatabase:
-          name: church-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: church-db
-          property: password
-
-databases:
-  - name: church-db
-    databaseName: church_app
-    user: church_user
